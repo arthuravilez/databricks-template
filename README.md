@@ -1,9 +1,9 @@
 # databricks-template
 
-> A production-ready PySpark project template with medallion architecture, Python packaging, unit tests, integration tests, CI/CD automation, Databricks Asset Bundles, and DQX data quality framework.
+> A production-ready PySpark project template with medallion architecture, Python packaging, unit tests, integration tests, coverage tests, CI/CD automation, Databricks Asset Bundles, and DQX data quality framework.
 
 ![Databricks](https://img.shields.io/badge/platform-Databricks-orange?logo=databricks)
-![PySpark](https://img.shields.io/badge/pyspark-4.0+-brightgreen?logo=apache-spark)
+![PySpark](https://img.shields.io/badge/pyspark-4.1+-brightgreen?logo=apache-spark)
 ![CI/CD](https://img.shields.io/github/actions/workflow/status/andre-salvati/databricks-template/.github/workflows/onpush.yml)
 ![Stars](https://img.shields.io/github/stars/andre-salvati/databricks-template?style=social)
 
@@ -18,12 +18,14 @@ Interested in bringing these principles in your own project?  Let’s [connect o
 ## 🧪 Technologies
 
 - Databricks Free Edition (Serverless)
-- Databricks Runtime 17.3 LTS
-- PySpark 4.0
-- Python 3.12+
-- Unity Catalog
+- Databricks Runtime 18.0 LTS
 - Databricks Asset Bundles
 - Databricks DQX
+- Databricks CLI
+- Databricks Python SDK
+- PySpark 4.1
+- Python 3.12+
+- Unity Catalog
 - GitHub Actions
 - Pytest
 
@@ -32,8 +34,9 @@ Interested in bringing these principles in your own project?  Let’s [connect o
 This project template demonstrates how to:
 
 - structure PySpark code inside classes/packages.
-- structure unit tests for the data transformations and set up VSCode to run them on your local machine.
+- run unit tests on transformations with [pytest package](https://pypi.org/project/pytest/) - set up VSCode to run unit tests on your local machine.
 - structure integration tests to be executed on different environments / catalogs.
+- utilize [coverage package](https://pypi.org/project/coverage/) to generate test coverage reports.
 - package and deploy code to different environments (dev, staging, prod) using a CI/CD pipeline with [Github Actions](https://docs.github.com/en/actions).
 - isolate "dev" environments / catalogs to avoid concurrency issues between developers testing jobs.
 - utilize [uv](https://docs.astral.sh/uv/) as a project/package manager.
@@ -42,24 +45,18 @@ This project template demonstrates how to:
 - use [medallion architecture](https://www.databricks.com/glossary/medallion-architecture) pattern.
 - lint and format code with [ruff](https://docs.astral.sh/ruff/) and [pre-commit](https://pre-commit.com/).
 - use a Make file to automate repetitive tasks.
-- utilize [pytest package](https://pypi.org/project/pytest/) to run unit tests on transformations and generate test coverage reports.
 - utilize [argparse package](https://pypi.org/project/argparse/) to build a flexible command line interface to start the jobs.
-- utilize [funcy package](https://pypi.org/project/funcy/) to log the execution time of each transformation.
 
 <br>
 
 - utilize [Databricks Asset Bundles](https://docs.databricks.com/en/dev-tools/bundles/index.html) to package/deploy/run a Python wheel package on Databricks.
-- utilize [Databricks DQX](https://databrickslabs.github.io/dqx/) to define and enforce data quality rules, such as null checks, uniqueness, thresholds, and schema validation.
-- utilize [Databricks SDK for Python](https://docs.databricks.com/en/dev-tools/sdk-python.html) to manage workspaces and accounts. The sample script enables metastore system tables with [relevant data about billing, usage, lineage, prices, and access](https://www.youtube.com/watch?v=LcRWHzk8Wm4).
+- utilize [Databricks DQX](https://databrickslabs.github.io/dqx/) to define and enforce data quality rules, such as null checks, uniqueness, thresholds, and schema validation, and filter bad data on quarantine tables.
+- utilize [Databricks SDK for Python](https://docs.databricks.com/en/dev-tools/sdk-python.html) to manage workspaces and accounts and analyse costs. Refer to 'scripts' folder for some examples. 
 - utilize [Databricks Unity Catalog](https://www.databricks.com/product/unity-catalog) and get data lineage for your tables and columns and a simplified permission model for your data.
 - utilize [Databricks Lakeflow Jobs](https://docs.databricks.com/en/workflows/index.html) to execute a DAG and [task parameters](https://docs.databricks.com/en/workflows/jobs/parameter-value-references.html) to share context information between tasks (see [Task Parameters section](#task-parameters)). Yes, you don't need Airflow to manage your DAGs here!!!
-- **utilize serverless clusters on Databricks Free Edition to deploy your pipelines.**
-- utilize [Databricks job clusters](https://docs.databricks.com/en/workflows/jobs/use-compute.html#use-databricks-compute-with-your-jobs) to reduce costs.
-- define Databricks clusters on AWS and Azure.
+- utilize serverless job clusters on [Databricks Free Edition](https://docs.databricks.com/aws/en/getting-started/free-edition  ) to deploy your pipelines.
 
 ## 🧠 Resources
-
-- [Goodbye Pip and Poetry. Why UV Might Be All You Need](https://codecut.ai/why-uv-might-all-you-need/)
 
 For a debate on the use of notebooks vs. Python packaging, please refer to:
 - [The Rise of The Notebook Engineer](https://dataengineeringcentral.substack.com/p/the-rise-of-the-notebook-engineer)
@@ -73,7 +70,64 @@ Sessions on Databricks Asset Bundles, CI/CD, and Software Development Life Cycle
 - [Deploying Databricks Asset Bundles (DABs) at Scale](https://www.youtube.com/watch?v=mMwprgB-sIU)
 - [A Prescription for Success: Leveraging DABs for Faster Deployment and Better Patient Outcomes](https://www.youtube.com/watch?v=01JHTM2UP-U)
 
-## Jobs (former Workflows)
+Other:
+- [Goodbye Pip and Poetry. Why UV Might Be All You Need](https://codecut.ai/why-uv-might-all-you-need/)
+
+## 📁 Folder Structure
+
+```
+databricks-template/
+│
+├── .github/                     # CI/CD automation
+│   └── workflows/
+│       └── onpush.yml           # GitHub Actions pipeline
+│
+├── src/                         # Main source code
+│   └── template/                # Python package
+│       ├── main.py              # Entry point with CLI (argparse)
+│       ├── config.py            # Configuration management
+│       ├── baseTask.py          # Base class for all tasks
+│       ├── commonSchemas.py     # Shared PySpark schemas
+│       └── job1/                # Job-specific tasks
+│           ├── extract_source1.py
+│           ├── extract_source2.py
+│           ├── generate_orders.py
+│           ├── generate_orders_agg.py
+│           ├── integration_setup.py
+│           └── integration_validate.py
+│
+├── tests/                       # Unit tests
+│   └── job1/
+│       └── unit_test.py         # Pytest unit tests
+│
+├── resources/                   # Databricks workflow templates
+│   ├── wf_template_serverless.yml  # Jinja2 template for serverless
+│   ├── wf_template.yml             # Jinja2 template for job clusters
+│   └── workflow.yml                # Generated workflow (auto-created)
+│
+├── scripts/                     # Helper scripts
+│   ├── generate_template_workflow.py  # Workflow generator (Jinja2)
+│   ├── sdk_analyze_job_costs.py      # Cost analysis script
+│   └── sdk_workspace_and_account.py  # Workspace and account management
+│ print("SUMMARY")
+├── docs/                        # Documentation assets
+│   ├── dag.png
+│   ├── task_output.png
+│   ├── data_lineage.png
+│   ├── data_quality.png
+│   └── ci_cd.png
+│
+├── dist/                        # Build artifacts (Python wheel)
+├── coverage_reports/            # Test coverage reports
+│
+├── databricks.yml               # Databricks Asset Bundle config
+├── pyproject.toml               # Python project configuration (uv)
+├── Makefile                     # Build automation
+├── .pre-commit-config.yaml      # Pre-commit hooks (ruff)
+└── README.md                    # This file
+```
+
+## Jobs
 
 <br>
 
@@ -89,9 +143,10 @@ Sessions on Databricks Asset Bundles, CI/CD, and Software Development Life Cycle
 
 <br>
 
-## Data Lineage (Catalog Explorer)
+## Data Lineage
 
 <br>
+
 
 <img src="docs/data_lineage.png">
 
@@ -117,47 +172,27 @@ Sessions on Databricks Asset Bundles, CI/CD, and Software Development Life Cycle
 
 ## Instructions
 
-### 1) Create a Databricks Workspace
-
-option 1) utilize a [Databricks Free Edition](https://docs.databricks.com/aws/en/getting-started/free-edition) workspace.
-
-option 2) create a Premium workspace. Follow instructions [here](https://github.com/databricks/terraform-databricks-examples)
+1) Create a workspace. Use a [Databricks Free Edition](https://docs.databricks.com/aws/en/getting-started/free-edition) workspace.
 
 
-### 2) Install and configure Databricks CLI on your local machine
-
-Follow the instructions [here](https://docs.databricks.com/en/dev-tools/cli/install.html)
+2) Install and configure Databricks CLI on your local machine. Follow instructions [here](https://docs.databricks.com/en/dev-tools/cli/install.html). Check the current version on databricks.yaml.
 
 
-### 3) Build Python env and execute unit tests on your local machine
+3) Build Python env and execute unit tests on your local machine
 
         make sync & make test
 
-You can also execute unit tests from your preferred IDE. Here's a screenshot from [VS Code](https://code.visualstudio.com/) with [Microsoft's Python extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) installed.
 
-<img src="docs/vscode.png">
-
-### 4) Deploy and execute on the dev workspace.
-
-option 1) for Databricks Free Edition use:
+4) Deploy and execute on the dev workspace.
 
         make deploy-serverless env=dev
-        make deploy-serverless env=staging
-        make deploy-serverless env=prod
 
 
-option 2) for Premium workspace:
+5) configure CI/CD automation. Configure [Github Actions repository secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) (DATABRICKS_HOST and DATABRICKS_TOKEN).
 
-        Update "job_clusters" properties on wf_template.yml file. There are different properties for AWS and Azure.
+6) You can also execute unit tests from your preferred IDE. Here's a screenshot from [VS Code](https://code.visualstudio.com/) with [Microsoft's Python extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) installed.
 
-        make deploy env=dev
-        make deploy env=staging
-        make deploy env=prod
-
-
-### 5) configure CI/CD automation
-
-Configure [Github Actions repository secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) DATABRICKS_HOST and DATABRICKS_TOKEN.
+- <img src="docs/vscode.png">
 
 
 ## Task parameters
