@@ -74,6 +74,7 @@ Sessions on Databricks Asset Bundles, CI/CD, and Software Development Life Cycle
 
 Other:
 - [Goodbye Pip and Poetry. Why UV Might Be All You Need](https://codecut.ai/why-uv-might-all-you-need/)
+- [The Spark Revolution You Didn’t See Coming: How Apache Spark 4.0 in Databricks Just Changed Everything](https://medium.com/@matiasmaquieira96/the-spark-revolution-you-didnt-see-coming-how-apache-spark-4-0-2a6422144f67)
 
 ## 📁 Folder Structure
 
