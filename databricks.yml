@@ -32,15 +32,15 @@ targets:
     mode: development
     default: true
     workspace:
-      profile: dev
+      profile: DEFAULT
 
   staging:
     workspace:
-      profile: dev
+      profile: DEFAULT
 
   prod:
     workspace:
-      profile: dev
+      profile: DEFAULT
       # For production deployments, we only have a single copy, so we override the workspace.root_path default of
       # /Users/${workspace.current_user.userName}/.bundle/${bundle.target}/${bundle.name}
       # to a path that is not specific to the current user.      
