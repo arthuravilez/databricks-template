@@ -7,6 +7,9 @@ from .job1.generate_orders import GenerateOrders
 from .job1.generate_orders_agg import GenerateOrdersAgg
 from .job1.integration_setup import Setup
 from .job1.integration_validate import Validate
+from .medallion.bronze import BronzeTask
+from .medallion.silver import SilverTask
+from .medallion.gold import GoldTask
 
 
 def arg_parser():
@@ -17,7 +20,7 @@ def arg_parser():
     parser.add_argument(
         "--task",
         required=True,
-        choices=["extract_source1", "extract_source2", "generate_orders", "generate_orders_agg", "setup", "validate"],
+        choices=["extract_source1", "extract_source2", "generate_orders", "generate_orders_agg", "setup", "validate", "medallion_bronze", "medallion_silver", "medallion_gold"],
     )
     parser.add_argument("--schema")
     parser.add_argument("--skip", action="store_true")
@@ -44,6 +47,12 @@ def main():
             Setup(config).run()
         elif args.task == "validate":
             Validate(config).run()
+        elif args.task == "medallion_bronze":
+            BronzeTask(config).run()
+        elif args.task == "medallion_silver":
+            SilverTask(config).run()
+        elif args.task == "medallion_gold":
+            GoldTask(config).run()
 
 
 if __name__ == "__main__":
